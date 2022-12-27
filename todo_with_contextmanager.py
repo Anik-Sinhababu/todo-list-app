@@ -82,7 +82,9 @@
 from functions import get_todos, write_todos
 import time
 
+
 now = time.strftime('%A\nDate:-%d-%b-%y\nTime:-%H:%M:%S')
+print("The date is as below")
 print(now)
 while True:
     user_action = input("Enter the action you want to perform\nadd\t\tshow\tedit\tcomplete\texit\n")
