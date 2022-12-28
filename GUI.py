@@ -1,20 +1,24 @@
 from functions import get_todos, write_todos
 import PySimpleGUI as sg
+import time
 
+
+clock = sg.Text(key="clock", background_color="lavender", text_color="black", font=("Dina", 11))
 label = sg.Text("Type in a To-Do Item", text_color="black", background_color="lavender blush2")
 input_box = sg.InputText(tooltip="Enter a todo item", key="todo")
-button = sg.Button('Add', button_color="black")
-list_box = sg.Listbox(values=get_todos(), key='todos', enable_events=True, size=[60, 6], background_color="lavender")
-edit_button = sg.Button("Edit", button_color="black")
-complete_button = sg.Button("Complete", button_color="black")
-exit_button = sg.Button("Exit", button_color="black")
-window = sg.Window('MY TO_DO APP', layout=[[label], [input_box, button],
+button = sg.Button('Add', button_color="gray15", size=10)
+list_box = sg.Listbox(values=get_todos(), key='todos', enable_events=True, size=[45,0], background_color="lavender")
+edit_button = sg.Button("Edit", button_color="gray15")
+complete_button = sg.Button("Complete", button_color="gray15")
+exit_button = sg.Button("Exit", button_color="gray15")
+window = sg.Window('MY TO_DO APP', layout=[[label, clock], [input_box, button],
                                            [list_box, edit_button, complete_button], [exit_button]],
-                   background_color="gray20",
-                   font=('Dina', 13), icon="todo.ico")
+                   background_color="gray25",
+                   font=('Dina', 12), icon="todo.ico")
 
 while True:
-    event, values = window.read()
+    event, values = window.read(timeout=10)
+    window["clock"].update(value=time.strftime("%A\nDate:-%d-%b-%y\nTime:-%H:%M:%S"))
     match event:
         case 'Add':
             todos = get_todos()
@@ -34,15 +38,20 @@ while True:
                 write_todos(todos)
                 window['todos'].update(values=todos)
             except IndexError:
-                sg.popup("Try selecting an index first *-<>-*", font=("helvetica", 11), icon="warning.ico")
+                sg.popup("Try selecting an item first, then go for editing!!!! ", title="Caution",
+                         font=("helvetica", 11), icon="caution.ico")
 
         case 'Complete':
-            todo_to_complete = values['todos'][0]
-            todos = get_todos()
-            todos.remove(todo_to_complete)
-            write_todos(todos)
-            window['todos'].update(values=todos)
-            window['todo'].update(value="")
+            try:
+                todo_to_complete = values['todos'][0]
+                todos = get_todos()
+                todos.remove(todo_to_complete)
+                write_todos(todos)
+                window['todos'].update(values=todos)
+                window['todo'].update(value="")
+            except IndexError:
+                sg.popup("To complete a task first select a task", title="Caution",
+                         font=("helvetica", 11), icon="caution.ico")
         case 'todos':
             input_box = window['todo'].update(value=values['todos'][0])
         case 'Exit':
