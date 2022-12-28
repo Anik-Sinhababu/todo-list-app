@@ -5,9 +5,9 @@ label = sg.Text("Type in a To-Do Item", text_color="black", background_color="la
 input_box = sg.InputText(tooltip="Enter a todo item", key="todo")
 button = sg.Button('Add', button_color="black")
 list_box = sg.Listbox(values=get_todos(), key='todos', enable_events=True, size=[60, 6], background_color="lavender")
-edit_button = sg.Button("Edit")
-complete_button = sg.Button("Complete")
-exit_button = sg.Button("Exit")
+edit_button = sg.Button("Edit", button_color="black")
+complete_button = sg.Button("Complete", button_color="black")
+exit_button = sg.Button("Exit", button_color="black")
 window = sg.Window('MY TO_DO APP', layout=[[label], [input_box, button],
                                            [list_box, edit_button, complete_button], [exit_button]],
                    background_color="gray20",
@@ -25,13 +25,16 @@ while True:
             window['todos'].update(values=todos)
 
         case 'Edit':
-            todo_to_edit = values['todos'][0]
-            new_todo = values['todo']
-            todos = get_todos()
-            index = todos.index(todo_to_edit)
-            todos[index] = new_todo
-            write_todos(todos)
-            window['todos'].update(values=todos)
+            try:
+                todo_to_edit = values['todos'][0]
+                new_todo = values['todo']
+                todos = get_todos()
+                index = todos.index(todo_to_edit)
+                todos[index] = new_todo
+                write_todos(todos)
+                window['todos'].update(values=todos)
+            except IndexError:
+                sg.popup("Try selecting an index first *-<>-*", font=("helvetica", 11), icon="warning.ico")
 
         case 'Complete':
             todo_to_complete = values['todos'][0]
